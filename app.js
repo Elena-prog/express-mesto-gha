@@ -19,6 +19,9 @@ app.use((req, res, next) => {
 })
 app.use('/users', users);
 app.use('/cards', cards);
+app.all('/*', (req, res) => {
+    res.status(404).send({message: 'Страница не найдена'})
+})
 
 app.listen(PORT, () => {
     console.log(`App listened on port ${PORT}`);
