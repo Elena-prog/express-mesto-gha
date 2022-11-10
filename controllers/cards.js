@@ -48,10 +48,13 @@ module.exports.likeCard = (req, res) => {
         { $addToSet: { likes: req.user._id } },
         { new: true }
     )
+    .orFail(new Error('Not Found'))
     .then(card => res.send({data: card}))
     .catch((err) => {
-        if (err.name === 'CastError') {
+        if(err.name === 'Error'){
             res.status(404).send({ message: 'Карточка не найдена'});
+        } else if (err.name === 'CastError') {
+            res.status(400).send({ message: 'Карточка не найдена'});
           } else {
             res.status(500).send({ message: 'Произошла ошибка' });
         }
