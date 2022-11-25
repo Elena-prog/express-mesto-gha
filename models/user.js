@@ -35,9 +35,7 @@ const userSchema = new mongoose.Schema(
   },
 );
 
-userSchema.statics.checkEmail = function (email) {
-  return validator.isEmail(email);
-};
+userSchema.statics.checkEmail = (email) => {validator.isEmail(email)};
 
 userSchema.path('avatar').validate((link) => {
   const urlRegex = /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'*+,;=.]+$/gm;

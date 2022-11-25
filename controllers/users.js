@@ -22,7 +22,8 @@ module.exports.getUser = (req, res, next) => {
       if (err.name === 'Error') {
         throw new NotFoundError('Пользователь не найден');
       } else if (err.name === 'CastError') {
-        throw new BadRequestError('Пользователь не найден');}
+        throw new BadRequestError('Пользователь не найден');
+      }
     })
     .catch(next);
 };
@@ -66,15 +67,15 @@ module.exports.createUser = (req, res, next) => {
       avatar,
       email,
       password: hash,
-    }) 
-      .then(({ email, _id }) => {
-        res.status(201).send({ email, _id });
+    })
+      .then((userData) => {
+        res.status(201).send(userData);
       })
-      .catch((err) => {
-        if(err.code === 11000) {
+      .catch((error) => {
+        if (error.code === 11000) {
           throw new ConflictError('Этот email уже существует');
         }
-        if (err.name === 'ValidationError') {
+        if (error.name === 'ValidationError') {
           throw new BadRequestError('Переданы некорректные данные');
         }
       })
@@ -159,7 +160,7 @@ module.exports.login = (req, res, next) => {
           }).end();
         });
     })
-    .catch((err) => {
+    .catch(() => {
       throw new UnauthorizedError('Неправильные почта или пароль');
     })
     .catch(next);
