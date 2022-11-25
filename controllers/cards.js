@@ -1,48 +1,59 @@
 const card = require('../models/card');
+const NotFoundError = require('../errors/not-found-err');
+const BadRequestError = require('../errors/bad-request-err');
 
-const OK = 200;
-const BAD_REQUEST = 400;
-const NOT_FOUND = 404;
-const SERVER_ERROR = 500;
-
-module.exports.getCards = (req, res) => {
+module.exports.getCards = (req, res, next) => {
   card.find({})
-    .then((cards) => res.status(OK).send({ data: cards }))
-    .catch(() => {
-      res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' });
-    });
+    .then((cards) => res.status(200).send({ data: cards }))
+    .catch(next);
 };
 
-module.exports.createCard = (req, res) => {
+module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
 
   card.create({ name, link, owner: req.user._id })
     .then((cardData) => res.send({ data: cardData }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
-      } else {
-        res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' });
+        throw new BadRequestError('Переданы некорректные данные');
       }
-    });
+    })
+    .catch(next);
 };
 
-module.exports.deleteCard = (req, res) => {
-  card.findByIdAndRemove(req.params.cardId)
+module.exports.deleteCard = (req, res, next) => {
+  card.findById(req.params.cardId)
     .orFail(new Error('Not Found'))
-    .then((cardData) => res.send({ data: cardData }))
+    .then((cardData) => {
+      if (req.user._id === cardData.owner.toString()) {
+        card.findByIdAndRemove(req.params.cardId)
+          .orFail(new Error('Not Found'))
+          .then((deletedCard) => {
+            res.send({ data: deletedCard });
+          })
+          .catch((err) => {
+            if (err.name === 'Error') {
+              throw new NotFoundError('Карточка не найдена');
+            } else if (err.name === 'CastError') {
+              throw new BadRequestError('Карточка не найдена');
+            }
+          })
+          .catch(next);
+      } else {
+        res.status(403).send({ message: 'Нет прав' });
+      }
+    })
     .catch((err) => {
       if (err.name === 'Error') {
-        res.status(NOT_FOUND).send({ message: 'Карточка не найдена' });
+        throw new NotFoundError('Карточка не найдена');
       } else if (err.name === 'CastError') {
-        res.status(BAD_REQUEST).send({ message: 'Карточка не найдена' });
-      } else {
-        res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' });
+        throw new BadRequestError('Карточка не найдена');
       }
-    });
+    })
+    .catch(next);
 };
 
-module.exports.likeCard = (req, res) => {
+module.exports.likeCard = (req, res, next) => {
   card.findByIdAndUpdate(
     req.params.cardId,
     { $addToSet: { likes: req.user._id } },
@@ -52,16 +63,15 @@ module.exports.likeCard = (req, res) => {
     .then((cardData) => res.send({ data: cardData }))
     .catch((err) => {
       if (err.name === 'Error') {
-        res.status(NOT_FOUND).send({ message: 'Карточка не найдена' });
+        throw new NotFoundError('Карточка не найдена');
       } else if (err.name === 'CastError') {
-        res.status(BAD_REQUEST).send({ message: 'Карточка не найдена' });
-      } else {
-        res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' });
+        throw new BadRequestError('Карточка не найдена');
       }
-    });
+    })
+    .catch(next);
 };
 
-module.exports.dislikeCard = (req, res) => {
+module.exports.dislikeCard = (req, res, next) => {
   card.findByIdAndUpdate(
     req.params.cardId,
     { $pull: { likes: req.user._id } },
@@ -71,12 +81,11 @@ module.exports.dislikeCard = (req, res) => {
     .then((cardData) => res.send({ data: cardData }))
     .catch((err) => {
       if (err.name === 'Error') {
-        res.status(NOT_FOUND).send({ message: 'Карточка не найдена' });
+        throw new NotFoundError('Карточка не найдена');
       } else
       if (err.name === 'CastError') {
-        res.status(BAD_REQUEST).send({ message: 'Карточка не найдена' });
-      } else {
-        res.status(SERVER_ERROR).send({ message: 'Произошла ошибка' });
+        throw new BadRequestError('Карточка не найдена');
       }
-    });
+    })
+    .catch(next);
 };
