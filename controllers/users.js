@@ -54,7 +54,6 @@ module.exports.createUser = (req, res, next) => {
   } = req.body;
 
   if (!user.checkEmail(email)) {
-    console.log(user.checkEmail(email));
     throw new BadRequestError('Переданы некорректные данные');
   }
 
@@ -69,8 +68,8 @@ module.exports.createUser = (req, res, next) => {
       email,
       password: hash,
     })
-      .then((userData) => {
-        res.status(201).send(userData);
+      .then(({name, about, avatar, email}) => {
+        res.status(201).send({name, about, avatar, email});
       })
       .catch((error) => {
         if (error.code === 11000) {
@@ -158,7 +157,7 @@ module.exports.login = (req, res, next) => {
             maxAge: 3600000 * 24 * 7,
             httpOnly: true,
             sameSite: true,
-          }).end();
+          }).send({ data: userData }).end();
         });
     })
     .catch(() => {
