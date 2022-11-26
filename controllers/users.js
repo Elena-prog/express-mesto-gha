@@ -153,11 +153,12 @@ module.exports.login = (req, res, next) => {
             'some-secret-key',
             { expiresIn: '7d' },
           );
-          return res.cookie('jwt', token, {
-            maxAge: 3600000 * 24 * 7,
-            httpOnly: true,
-            sameSite: true,
-          }).send({ data: userData }).end();
+          return res.send({ token }).send({ data: userData });
+          // return res.cookie('jwt', token, {
+          //   maxAge: 3600000 * 24 * 7,
+          //   httpOnly: true,
+          //   sameSite: true,
+          // }).send({ data: userData }).end();
         });
     })
     .catch(() => {
