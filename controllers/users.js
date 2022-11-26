@@ -54,6 +54,7 @@ module.exports.createUser = (req, res, next) => {
   } = req.body;
 
   if (!user.checkEmail(email)) {
+    console.log(user.checkEmail(email));
     throw new BadRequestError('Переданы некорректные данные');
   }
 
