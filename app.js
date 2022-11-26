@@ -25,7 +25,7 @@ app.use('/users', users);
 app.use('/cards', cards);
 
 app.use(errors());
-app.use((err, req, res) => {
+app.use((err, req, res, next) => {
   const { statusCode = 500, message } = err;
   res
     .status(statusCode)
