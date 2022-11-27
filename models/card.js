@@ -32,4 +32,9 @@ const cardSchema = new mongoose.Schema(
   },
 );
 
+cardSchema.path('link').validate((link) => {
+  const urlRegex = /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'*+,;=.]+$/gm;
+  return urlRegex.test(link);
+}, 'Invalid URL.');
+
 module.exports = mongoose.model('card', cardSchema);
