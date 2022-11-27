@@ -68,27 +68,27 @@ module.exports.createUser = (req, res, next) => {
       email,
       password: hash,
     })
-      .then(({ userData }) => {
-        res.status(201).send({
-          name: userData.name,
-          about: userData.about,
-          avatar: userData.avatar,
-          email: userData.email,
-        });
-      })
-      // .then(({
-      //   name,
-      //   about,
-      //   avatar,
-      //   email,
-      // }) => {
+      // .then(({ userData }) => {
       //   res.status(201).send({
-      //     name,
-      //     about,
-      //     avatar,
-      //     email,
+      //     name: userData.name,
+      //     about: userData.about,
+      //     avatar: userData.avatar,
+      //     email: userData.email,
       //   });
       // })
+      .then(({
+        name,
+        about,
+        avatar,
+        email,
+      }) => {
+        res.status(201).send({
+          name,
+          about,
+          avatar,
+          email,
+        });
+      })
       .catch((error) => {
         if (error.code === 11000) {
           throw new ConflictError('Этот email уже существует');
