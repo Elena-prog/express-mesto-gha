@@ -61,34 +61,34 @@ module.exports.createUser = (req, res, next) => {
     if (err) {
       throw new Error('не удалось захешировать пароль');
     }
-    // user.create({
-    //   name,
-    //   about,
-    //   avatar,
-    //   email,
-    //   password: hash,
-    // })
-      .then(({ userData }) => {
+    user.create({
+      name,
+      about,
+      avatar,
+      email,
+      password: hash,
+    })
+      .then((userData) => {
         res.status(201).send({
-          'name': userData.name,
-          'about': userData.about,
-          'avatar': userData.avatar,
-          'email': userData.email,
+          name: userData.name,
+          about: userData.about,
+          avatar: userData.avatar,
+          email: userData.email,
         });
       })
-      .then(({
-        name,
-        about,
-        avatar,
-        email,
-      }) => {
-        res.status(201).send({
-          name,
-          about,
-          avatar,
-          email,
-        });
-      })
+      // .then(({
+      //   name,
+      //   about,
+      //   avatar,
+      //   email,
+      // }) => {
+      //   res.status(201).send({
+      //     name,
+      //     about,
+      //     avatar,
+      //     email,
+      //   });
+      // })
       .catch((error) => {
         if (error.code === 11000) {
           throw new ConflictError('Этот email уже существует');
