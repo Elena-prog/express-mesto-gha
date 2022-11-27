@@ -61,21 +61,21 @@ module.exports.createUser = (req, res, next) => {
     if (err) {
       throw new Error('не удалось захешировать пароль');
     }
-    user.create({
-      name,
-      about,
-      avatar,
-      email,
-      password: hash,
-    })
-      // .then(({ userData }) => {
-      //   res.status(201).send({
-      //     name: userData.name,
-      //     about: userData.about,
-      //     avatar: userData.avatar,
-      //     email: userData.email,
-      //   });
-      // })
+    // user.create({
+    //   name,
+    //   about,
+    //   avatar,
+    //   email,
+    //   password: hash,
+    // })
+      .then(({ userData }) => {
+        res.status(201).send({
+          'name': userData.name,
+          'about': userData.about,
+          'avatar': userData.avatar,
+          'email': userData.email,
+        });
+      })
       .then(({
         name,
         about,
