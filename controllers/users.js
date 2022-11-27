@@ -164,11 +164,12 @@ module.exports.login = (req, res, next) => {
             { expiresIn: '7d' },
           );
           // return res.send({ token }).send({ data: userData });
-          return res.cookie('jwt', token, {
+          res.cookie('jwt', token, {
             maxAge: 3600000 * 24 * 7,
             httpOnly: true,
             sameSite: true,
-          }).end();
+          });
+          res.send({ data: userData });
         });
     })
     .catch(() => {
