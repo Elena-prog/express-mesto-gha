@@ -68,8 +68,18 @@ module.exports.createUser = (req, res, next) => {
       email,
       password: hash,
     })
-      .then(({ name, about, avatar, email }) => {
-        res.status(201).send({ name, about, avatar, email });
+      .then(({
+        name,
+        about,
+        avatar,
+        email,
+      }) => {
+        res.status(201).send({
+          name,
+          about,
+          avatar,
+          email,
+        });
       })
       .catch((error) => {
         if (error.code === 11000) {
@@ -153,12 +163,12 @@ module.exports.login = (req, res, next) => {
             'some-secret-key',
             { expiresIn: '7d' },
           );
-          return res.send({ token }).send({ data: userData });
-          // return res.cookie('jwt', token, {
-          //   maxAge: 3600000 * 24 * 7,
-          //   httpOnly: true,
-          //   sameSite: true,
-          // }).send({ data: userData }).end();
+          // return res.send({ token }).send({ data: userData });
+          return res.cookie('jwt', token, {
+            maxAge: 3600000 * 24 * 7,
+            httpOnly: true,
+            sameSite: true,
+          }).send({ data: userData }).end();
         });
     })
     .catch(() => {
