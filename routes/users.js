@@ -4,15 +4,7 @@ const {
   getUsers, getUser, updateUser, updateAvatar, getUserInfo,
 } = require('../controllers/users');
 
-router.get(
-  '/',
-  // celebrate({
-  //   headers: Joi.object().keys({
-  //     authorization: Joi.string().required()
-  //   })
-  // }),
-  getUsers,
-);
+router.get('/', getUsers);
 
 router.patch('/me', celebrate({
   body: Joi.object().keys({

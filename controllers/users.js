@@ -68,16 +68,7 @@ module.exports.createUser = (req, res, next) => {
       email,
       password: hash,
     })
-      // .then((userData) => {
-      //   res.status(201).send({
-      //     name: userData.name,
-      //     about: userData.about,
-      //     avatar: userData.avatar,
-      //     email: userData.email,
-      //   });
-      // })
       .then((userData) => {
-        console.log(userData);
         res.status(201).send({
           name: userData.name,
           about: userData.about,
