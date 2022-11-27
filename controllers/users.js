@@ -76,17 +76,13 @@ module.exports.createUser = (req, res, next) => {
       //     email: userData.email,
       //   });
       // })
-      .then(({
-        name,
-        about,
-        avatar,
-        email,
-      }) => {
+      .then((userData) => {
+        console.log(userData);
         res.status(201).send({
-          name,
-          about,
-          avatar,
-          email,
+          name: userData.name,
+          about: userData.about,
+          avatar: userData.avatar,
+          email: userData.email,
         });
       })
       .catch((error) => {
