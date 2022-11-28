@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const validator = require('validator');
+const { REGEXP_URL, REGEXP_EMAIL } = require('../constants');
 
 const userSchema = new mongoose.Schema(
   {
@@ -35,11 +35,14 @@ const userSchema = new mongoose.Schema(
   },
 );
 
-userSchema.statics.checkEmail = (email) => validator.isEmail(email);
-
 userSchema.path('avatar').validate((link) => {
-  const urlRegex = /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'*+,;=.]+$/gm;
+  const urlRegex = REGEXP_URL;
   return urlRegex.test(link);
 }, 'Invalid URL.');
+
+userSchema.path('email').validate((email) => {
+  const emailRegex = REGEXP_EMAIL;
+  return emailRegex.test(email);
+}, 'Invalid email.');
 
 module.exports = mongoose.model('user', userSchema);

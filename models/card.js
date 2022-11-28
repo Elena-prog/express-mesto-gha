@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { REGEXP_URL } = require('../constants');
 
 const cardSchema = new mongoose.Schema(
   {
@@ -33,7 +34,7 @@ const cardSchema = new mongoose.Schema(
 );
 
 cardSchema.path('link').validate((link) => {
-  const urlRegex = /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'*+,;=.]+$/gm;
+  const urlRegex = REGEXP_URL;
   return urlRegex.test(link);
 }, 'Invalid URL.');
 
