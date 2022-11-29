@@ -119,6 +119,9 @@ module.exports.updateAvatar = (req, res, next) => {
     })
     .then((userData) => res.status(OK).send({ data: userData }))
     .catch((err) => {
+      if (err.name === 'CastError') {
+        return next(new BadRequestError('Пользователь не найден'));
+      }
       if (err.name === 'ValidationError') {
         return next(new BadRequestError('Переданы некорректные данные'));
       }

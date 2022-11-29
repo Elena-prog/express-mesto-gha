@@ -4,7 +4,7 @@ const UnauthorizedError = require('../errors/unauthorized');
 module.exports = (req, res, next) => {
   const token = req.cookies.jwt;
   if (!token) {
-    throw new UnauthorizedError('Токен не передан');
+    next(new UnauthorizedError('Токен не передан'));
   }
   let payload;
   try {
