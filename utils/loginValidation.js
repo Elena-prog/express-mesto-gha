@@ -1,7 +1,7 @@
 const { Joi } = require('celebrate');
 const { REGEXP_URL } = require('../constants');
 
-const { body } = {
+const registrationValidation = {
   body: Joi.object().keys({
     email: Joi.string().required(true).email(),
     password: Joi.string().required(true),
@@ -11,4 +11,11 @@ const { body } = {
   }),
 };
 
-module.exports = { body };
+const loginValidation = {
+  body: Joi.object().keys({
+    email: Joi.string().required(true).email(),
+    password: Joi.string().required(true),
+  }),
+};
+
+module.exports = { registrationValidation, loginValidation };
