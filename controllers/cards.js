@@ -26,32 +26,20 @@ module.exports.createCard = (req, res, next) => {
 
 module.exports.deleteCard = (req, res, next) => {
   card.findById(req.params.cardId)
-    .orFail(new NotFoundError())
+    .orFail(new NotFoundError('Карточка не найдена'))
     .then((cardData) => {
       if (req.user._id === cardData.owner.toString()) {
         cardData.remove()
           .then((deletedCard) => {
             res.status(OK).send({ data: deletedCard });
-          })
-          .catch((err) => {
-            if (err.name === 'CastError') {
-              throw new BadRequestError();
-            }
-          })
-          .catch(next);
+          });
       } else {
         throw new ForbiddenError('Недостаточно прав для удаления карточки');
       }
     })
     .catch((err) => {
-      if (err.name === 'NotFoundError') {
-        return next(new NotFoundError('Карточка не найдена'));
-      }
       if (err.name === 'CastError') {
         return next(new BadRequestError('Карточка не найдена'));
-      }
-      if (err.name === 'ForbiddenError') {
-        return next(new ForbiddenError('Недостаточно прав для удаления карточки'));
       }
       return next(err);
     });
@@ -63,12 +51,9 @@ module.exports.likeCard = (req, res, next) => {
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
-    .orFail(new NotFoundError())
+    .orFail(new NotFoundError('Карточка не найдена'))
     .then((cardData) => res.status(OK).send({ data: cardData }))
     .catch((err) => {
-      if (err.name === 'NotFoundError') {
-        return next(new NotFoundError('Карточка не найдена'));
-      }
       if (err.name === 'CastError') {
         return next(new BadRequestError('Карточка не найдена'));
       }
@@ -82,12 +67,9 @@ module.exports.dislikeCard = (req, res, next) => {
     { $pull: { likes: req.user._id } },
     { new: true },
   )
-    .orFail(new NotFoundError())
+    .orFail(new NotFoundError('Карточка не найдена'))
     .then((cardData) => res.status(OK).send({ data: cardData }))
     .catch((err) => {
-      if (err.name === 'NotFoundError') {
-        return next(new NotFoundError('Карточка не найдена'));
-      }
       if (err.name === 'CastError') {
         return next(new BadRequestError('Карточка не найдена'));
       }

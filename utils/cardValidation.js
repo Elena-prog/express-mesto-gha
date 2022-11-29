@@ -7,7 +7,7 @@ const { body, params } = {
     link: Joi.string().required(true).regex(REGEXP_URL),
   }),
   params: Joi.object().keys({
-    cardId: Joi.string().hex().length(24),
+    cardId: Joi.string().hex().required(true).length(24),
   }),
 };
 
