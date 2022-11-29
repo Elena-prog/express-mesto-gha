@@ -5,7 +5,7 @@ const updateUserValidation = {
   body: Joi.object().keys({
     name: Joi.string().min(2).required(true).max(30),
     about: Joi.string().min(2).required(true).max(30),
-    avatar: Joi.string().required(true).regex(REGEXP_URL),
+    avatar: Joi.string().regex(REGEXP_URL),
   }),
 };
 
