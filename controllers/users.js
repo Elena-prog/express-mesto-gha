@@ -80,7 +80,6 @@ module.exports.updateUser = (req, res, next) => {
     {
       name,
       about,
-      avatar,
     },
     {
       new: true,
