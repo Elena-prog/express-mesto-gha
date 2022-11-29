@@ -1,11 +1,10 @@
 const jwt = require('jsonwebtoken');
 const UnauthorizedError = require('../errors/unauthorized');
-const BadRequestError = require('../errors/bad-request-err');
 
 module.exports = (req, res, next) => {
   const token = req.cookies.jwt;
   if (!token) {
-    throw new BadRequestError('Токен не передан');
+    throw new UnauthorizedError('Токен не передан');
   }
   let payload;
   try {
