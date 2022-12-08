@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const card = require('../models/card');
 const NotFoundError = require('../errors/not-found-err');
 const BadRequestError = require('../errors/bad-request-err');
@@ -7,7 +8,7 @@ const { OK, CREATED } = require('../constants');
 module.exports.getCards = (req, res, next) => {
   card.find({})
     .populate(['owner', 'likes'])
-    .then((cards) => res.status(OK).send({ data: cards }))
+    .then((cards) => res.status(OK).send(cards))
     .catch(next);
 };
 
@@ -15,7 +16,11 @@ module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
 
   card.create({ name, link, owner: req.user._id })
-    .then((cardData) => res.status(CREATED).send({ data: cardData }))
+    .then((cardData) => {
+      card.findById(cardData._id)
+        .populate(['owner', 'likes'])
+        .then((newCard) => res.status(CREATED).send(newCard));
+    })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         return next(new BadRequestError('Переданы некорректные данные'));
@@ -48,11 +53,12 @@ module.exports.deleteCard = (req, res, next) => {
 module.exports.likeCard = (req, res, next) => {
   card.findByIdAndUpdate(
     req.params.cardId,
-    { $addToSet: { likes: req.user._id } },
+    { $addToSet: { likes: new mongoose.Types.ObjectId(req.user._id) } },
     { new: true },
   )
     .orFail(new NotFoundError('Карточка не найдена'))
-    .then((cardData) => res.status(OK).send({ data: cardData }))
+    .populate(['owner', 'likes'])
+    .then((cardData) => res.status(OK).send(cardData))
     .catch((err) => {
       if (err.name === 'CastError') {
         return next(new BadRequestError('Карточка не найдена'));
@@ -64,11 +70,12 @@ module.exports.likeCard = (req, res, next) => {
 module.exports.dislikeCard = (req, res, next) => {
   card.findByIdAndUpdate(
     req.params.cardId,
-    { $pull: { likes: req.user._id } },
+    { $pull: { likes: new mongoose.Types.ObjectId(req.user._id) } },
     { new: true },
   )
     .orFail(new NotFoundError('Карточка не найдена'))
-    .then((cardData) => res.status(OK).send({ data: cardData }))
+    .populate(['owner', 'likes'])
+    .then((cardData) => res.status(OK).send(cardData))
     .catch((err) => {
       if (err.name === 'CastError') {
         return next(new BadRequestError('Карточка не найдена'));

@@ -4,10 +4,12 @@ const { NOT_FOUND } = require('../constants');
 const { login, createUser } = require('../controllers/users');
 const auth = require('../middlewares/auth');
 const { registrationValidation, loginValidation } = require('../utils/loginValidation');
+const corsControl = require('../middlewares/corsControl');
 
 const users = require('./users');
 const cards = require('./cards');
 
+router.use(corsControl);
 router.post('/signup', celebrate(registrationValidation), createUser);
 router.post('/signin', celebrate(loginValidation), login);
 router.use(auth);

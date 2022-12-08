@@ -7,12 +7,12 @@ const UnauthorizedError = require('../errors/unauthorized');
 const ConflictError = require('../errors/conflict-err');
 const { OK, CREATED } = require('../constants');
 
+const { NODE_ENV, KEY } = process.env;
+
 const findUserById = (id, res, next) => {
   user.findById(id)
     .orFail(new NotFoundError('Пользователь не найден'))
-    .then((userData) => {
-      res.status(OK).send({ data: userData });
-    })
+    .then((userData) => res.status(OK).send(userData))
     .catch((err) => {
       if (err.name === 'CastError') {
         return next(new BadRequestError('Пользователь не найден'));
@@ -23,7 +23,7 @@ const findUserById = (id, res, next) => {
 
 module.exports.getUsers = (req, res, next) => {
   user.find({})
-    .then((users) => res.status(OK).send({ data: users }))
+    .then((users) => res.status(OK).send(users))
     .catch(next);
 };
 
@@ -89,7 +89,7 @@ module.exports.updateUser = (req, res, next) => {
     .orFail(() => {
       throw new NotFoundError('Пользователь не найден');
     })
-    .then((userData) => res.status(OK).send({ data: userData }))
+    .then((userData) => res.status(OK).send(userData))
     .catch((err) => {
       if (err.name === 'CastError') {
         return next(new BadRequestError('Пользователь не найден'));
@@ -116,7 +116,7 @@ module.exports.updateAvatar = (req, res, next) => {
     .orFail(() => {
       throw new NotFoundError('Пользователь не найден');
     })
-    .then((userData) => res.status(OK).send({ data: userData }))
+    .then((userData) => res.status(OK).send(userData))
     .catch((err) => {
       if (err.name === 'CastError') {
         return next(new BadRequestError('Пользователь не найден'));
@@ -144,13 +144,13 @@ module.exports.login = (req, res, next) => {
           }
           const token = jwt.sign(
             { _id: userData._id },
-            process.env.KEY,
+            NODE_ENV === 'production' ? KEY : 'dev-secret',
             { expiresIn: '7d' },
           );
           res.cookie('jwt', token, {
             maxAge: 3600000 * 24 * 7,
             httpOnly: true,
-            sameSite: true,
+            // secure: NODE_ENV === 'production',
           });
           const loggedUser = userData.toObject();
           delete loggedUser.password;
