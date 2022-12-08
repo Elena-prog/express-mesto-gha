@@ -25,7 +25,7 @@ const options = {
   credentials: true,
 };
 
-app.use('*', cors(options));
+app.use('*', cors());
 
 mongoose.connect('mongodb://localhost:27017/mestodb', {
   autoIndex: true,
