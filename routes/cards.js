@@ -4,16 +4,15 @@ const {
   getCards, createCard, deleteCard, likeCard, dislikeCard,
 } = require('../controllers/cards');
 const { createCardValidation, paramsValidation } = require('../utils/cardValidation');
-const corsControl = require('../middlewares/corsControl');
 
 router.get('/', getCards);
 
-router.post('/', celebrate(createCardValidation), corsControl, createCard);
+router.post('/', celebrate(createCardValidation), createCard);
 
-router.delete('/:cardId', celebrate(paramsValidation), corsControl, deleteCard);
+router.delete('/:cardId', celebrate(paramsValidation), deleteCard);
 
-router.put('/:cardId/likes', celebrate(paramsValidation), corsControl, likeCard);
+router.put('/:cardId/likes', celebrate(paramsValidation), likeCard);
 
-router.delete('/:cardId/likes', celebrate(paramsValidation), corsControl, dislikeCard);
+router.delete('/:cardId/likes', celebrate(paramsValidation), dislikeCard);
 
 module.exports = router;

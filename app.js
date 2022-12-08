@@ -7,7 +7,6 @@ const { errors } = require('celebrate');
 const handleError = require('./middlewares/handleError');
 const router = require('./routes/index');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
-const corsControl = require('./middlewares/corsControl');
 
 const PORT = process.env.PORT || 3000;
 
@@ -17,6 +16,7 @@ const options = {
   origin: [
     'http://localhost:3001',
     'https://mesto.russia.nomoredomains.club',
+    'http://mesto.russia.nomoredomains.club',
   ],
   methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
   preflightContinue: false,
@@ -25,17 +25,15 @@ const options = {
   credentials: true,
 };
 
-app.use('*', cors());
-
 mongoose.connect('mongodb://localhost:27017/mestodb', {
   autoIndex: true,
 });
 
+app.use('*', cors(options));
 app.use(requestLogger);
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-// app.use(corsControl);
 app.use('/', router);
 app.use(errorLogger);
 app.use(errors());
