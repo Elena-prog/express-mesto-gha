@@ -9,7 +9,7 @@ const corsControl = require('../middlewares/corsControl');
 const users = require('./users');
 const cards = require('./cards');
 
-router.use(corsControl);
+// router.use(corsControl);
 router.post('/signup', celebrate(registrationValidation), createUser);
 router.post('/signin', celebrate(loginValidation), login);
 router.use(auth);

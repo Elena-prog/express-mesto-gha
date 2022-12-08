@@ -18,3 +18,7 @@
 Приложение обрабатывает ошибки 400, 404 и 500.
 
 \*[ссылка на демо](https://github.com/Elena-prog/express-mesto-gha.git)
+
+IP 130.193.51.5
+Frontend https://mesto.russia.nomoredomains.club
+Backend https://api.mesto.russia.nomoredomains.club
