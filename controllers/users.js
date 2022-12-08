@@ -21,15 +21,15 @@ const findUserById = (id, res, next) => {
     });
 };
 
-module.exports.getUsers = (req, res, next) => {
-  user.find({})
-    .then((users) => res.status(OK).send(users))
-    .catch(next);
-};
+// module.exports.getUsers = (req, res, next) => {
+//   user.find({})
+//     .then((users) => res.status(OK).send(users))
+//     .catch(next);
+// };
 
-module.exports.getUser = (req, res, next) => {
-  findUserById(req.params.userId, res, next);
-};
+// module.exports.getUser = (req, res, next) => {
+//   findUserById(req.params.userId, res, next);
+// };
 
 module.exports.getUserInfo = (req, res, next) => {
   findUserById(req.user._id, res, next);
@@ -150,7 +150,7 @@ module.exports.login = (req, res, next) => {
           res.cookie('jwt', token, {
             maxAge: 3600000 * 24 * 7,
             httpOnly: true,
-            // secure: NODE_ENV === 'production',
+            secure: NODE_ENV === 'production',
           });
           const loggedUser = userData.toObject();
           delete loggedUser.password;
