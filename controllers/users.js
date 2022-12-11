@@ -159,3 +159,15 @@ module.exports.login = (req, res, next) => {
     })
     .catch(next);
 };
+
+module.exports.exit = (req, res, next) => {
+  try {
+    res.clearCookie('jwt', {
+      httpOnly: true,
+      secure: NODE_ENV === 'production',
+    });
+    res.status(OK).send({ message: 'Пользователь вышел из приложения' });
+  } catch (err) {
+    next(err);
+  }
+};

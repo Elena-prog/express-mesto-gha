@@ -6,7 +6,7 @@ const { KEY = 'dev-secret' } = process.env;
 module.exports = (req, res, next) => {
   const token = req.cookies.jwt;
   if (!token) {
-    next(new UnauthorizedError('Токен не передан'));
+    return next(new UnauthorizedError('Токен не передан'));
   }
   let payload;
   try {
